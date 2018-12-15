@@ -9,7 +9,7 @@ option(BUILD_UNIT_TESTS "Build unit tests" ON)
 if (BUILD_UNIT_TESTS)
     enable_testing()
 
-    add_library(Catch INTERFACE)
+    add_library(Catch INTERFACE src/StarSuffixStructure.cpp src/StarSuffixStructure.hpp)
     target_include_directories(Catch INTERFACE tests/unit/include)
 
 endif()
