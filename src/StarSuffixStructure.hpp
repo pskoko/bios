@@ -7,9 +7,14 @@
 
 #include "SuffixStructure.hpp"
 
-class StarSuffixStructure : public SuffixStructure<int>{
+template <typename T>
+class StarSuffixStructure : public SuffixStructure<unsigned long>{
 private:
-    vector<int> text;
+    std::vector<unsigned long> text;
+    SuffixStructure<T>& suffixStructure;
+
+public:
+    StarSuffixStructure(SuffixStructure<T>& suffixStructure);
 
 };
 

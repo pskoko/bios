@@ -5,14 +5,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
 project(LCP-inducing)
 
-option(BUILD_UNIT_TESTS "Build unit tests" ON)
-if (BUILD_UNIT_TESTS)
-    enable_testing()
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+#if (BUILD_UNIT_TESTS)
+#    enable_testing()
+#
+#    add_library(Catch INTERFACE src/StarSuffixStructure.cpp src/StarSuffixStructure.hpp)
+#    target_include_directories(Catch INTERFACE tests/unit/include)
+#
+#endif()
 
-    add_library(Catch INTERFACE src/StarSuffixStructure.cpp src/StarSuffixStructure.hpp)
-    target_include_directories(Catch INTERFACE tests/unit/include)
-
-endif()
+set(SOURCES_LIST
+        "src/StarSuffixStructure.cpp"
+        "src/StringSuffixStructure.cpp"
+        "src/SuffixStructure.cpp"
+        )
 
 option(BUILD_DOC "Build documentation" ON)
 if (BUILD_DOC)
@@ -33,4 +39,4 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-
+add_executable(LCP ${SOURCES_LIST})
