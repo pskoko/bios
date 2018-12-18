@@ -22,16 +22,61 @@ bool SuffixStructure<T>::isSstar(const unsigned long index) const {
 
 template <typename T>
 void SuffixStructure<T>::induceL(bool induceLCP) {
-    for(unsigned long index = 0; index <= getSize(); index++){
-        if(!isSet(index)) continue;
-        if(isL(SA(index)-1)) addToLBucket(SA(index) - 1);
+    std::map<T, unsigned long> M;
+    unsigned long j;
+    unsigned long lcp;
+    T curr; // bucket symbol of the current index
+    T prev; // bucket symbol of the previous index
+    bool flag = false; // entering first bucket
+
+    for(unsigned long i = 0; i <= getSize(); i++) {
+        if(!isSet(i)) continue;
+        // TODO: check if SA(index)-1 < 0
+        if(isL(SA(i)-1)) addToLBucket(SA(i) - 1);
+
+        if(induceLCP) {
+
+            lcp = LCP(i);
+            if(i > 0 && isFirstInSBucket(SA(i))) {
+                lcp = 0;
+                while((*this)[SA(i)+lcp] == (*this)[SA(i-1)+lcp]) {
+                    lcp++;
+                }
+            }
+
+            j = SA(i)-1;
+
+            if(isFirstInLBucket(j)) {
+                LCP(j) = 0;
+                continue;
+            }
+
+            curr = (*this)[i];
+            if(flag && curr != prev) {
+                LCP(j) = 1;
+                continue;
+            }
+
+            LCP = M[(*this)[j]] + 1;
+
+            prev = curr;
+            flag = true;
+        }
     }
 }
 
 template <typename T>
-void SuffixStructure<T>::induceR(bool induceLCP) {
+void SuffixStructure<T>::induceS(bool induceLCP) {
+    std::map<T, unsigned long> M;
+    unsigned long j;
+    unsigned long lcp;
+    T curr; // bucket symbol of the current index
+    T prev; // bucket symbol of the previous index
+    bool flag = false; // entering first bucket
+
     for(unsigned long index = getSize(); index > 0; index--){
         if(!isSet(index)) continue;
+        // TODO: check if SA(index)-1 < 0
         if(isS(SA(index)-1)) addToSBucket(SA(index) - 1);
     }
 }

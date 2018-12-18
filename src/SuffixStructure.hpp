@@ -35,6 +35,11 @@ protected:
     void addToLBucket(unsigned long suffix);
     void addToSBucket(unsigned long suffix);
 
+    bool isFirstInLBucket(unsigned long suffix);
+    bool isLastInLBucket(unsigned long suffix);
+    bool isFirstInSBucket(unsigned long suffix);
+    bool isLastInSBucket(unsigned long suffix);
+
 
 public:
     virtual const unsigned long& SA(const unsigned long index) const;
@@ -52,7 +57,7 @@ public:
 
     virtual unsigned long getSize() const;
     void induceL(bool induceLcp);
-    void induceR(bool induceLcp);
+    void induceS(bool induceLcp);
 
 };
 
