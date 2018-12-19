@@ -22,45 +22,62 @@ bool SuffixStructure<T>::isSstar(const unsigned long index) const {
 
 template <typename T>
 void SuffixStructure<T>::induceL(bool induceLCP) {
-    std::map<T, unsigned long> M;
-    unsigned long j;
+
+    // std::map<T, unsigned long> M;
+
+    // from current bucket to i' iteration in paper
+    std::map<T,unsigned long> bucketToIPrime;
+
+    T symbol, currBucket;
+    unsigned long k; // position of the induced suffix in SA/LCP
+    unsigned long i_; // i' in paper
+    unsigned long min;
     unsigned long lcp;
-    T curr; // bucket symbol of the current index
-    T prev; // bucket symbol of the previous index
-    bool flag = false; // entering first bucket
 
     for(unsigned long i = 0; i <= getSize(); i++) {
+
         if(!isSet(i)) continue;
-        // TODO: check if SA(index)-1 < 0
-        if(isL(SA(i)-1)) addToLBucket(SA(i) - 1);
+
+        if((SA(i)-1) < 0 || !isL(SA(i)-1)) {
+            continue;
+        }
+
+        k = addToLBucket(SA(i) - 1);
 
         if(induceLCP) {
 
-            lcp = LCP(i);
-            if(i > 0 && isFirstInSBucket(SA(i))) {
+            currBucket = (*this)[SA(i)];
+
+            if(isFirstInLBucket(k)) {
+                bucketToIPrime[currBucket] = i;
                 lcp = 0;
-                while((*this)[SA(i)+lcp] == (*this)[SA(i-1)+lcp]) {
-                    lcp++;
+            } else {
+                i_ = bucketToIPrime[currBucket];
+                if(currBucket != (*this)[SA(i_)]) {
+                    bucketToIPrime[currBucket] = i;
+                    lcp = 1;
+                } else {
+                    min = LCP(i_+1);
+                    for(unsigned long j = i_+2; j <= i; j++) {
+                        if(LCP(j) < min) {
+                            min = LCP(j);
+                        }
+                    }
+                    lcp = min + 1;
                 }
             }
 
-            j = SA(i)-1;
+            LCP(k) = lcp;
 
-            if(isFirstInLBucket(j)) {
-                LCP(j) = 0;
-                continue;
+            if((k < getSize()) && isLastInLBucket(k)) {
+                lcp = 0;
+                while((*this)[SA(k)+lcp] == (*this)[SA(k+1)+lcp]) {
+                    lcp++;
+                }
+
+                LCP(k+1) = lcp;
             }
 
-            curr = (*this)[i];
-            if(flag && curr != prev) {
-                LCP(j) = 1;
-                continue;
-            }
-
-            LCP = M[(*this)[j]] + 1;
-
-            prev = curr;
-            flag = true;
         }
     }
 }
@@ -82,17 +99,21 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
 }
 
 template <typename T>
-void SuffixStructure<T>::addToLBucket(unsigned long suffix) {
+unsigned long SuffixStructure<T>::addToLBucket(unsigned long suffix) {
     T symbol = (*this)[suffix];
 
     SA(bucketIndices[symbol].first + bucketsOffsetL[symbol]) = suffix;
     bucketsOffsetL[symbol]++;
+
+    return bucketIndices[symbol].first + bucketsOffsetL[symbol] - 1;
 }
 
 template <typename T>
-void SuffixStructure<T>::addToSBucket(unsigned long suffix) {
+unsigned long SuffixStructure<T>::addToSBucket(unsigned long suffix) {
     T symbol = (*this)[suffix];
 
     SA(bucketIndices[symbol].first - bucketsOffsetS[symbol]) = suffix;
     bucketsOffsetL[symbol]++;
+
+    return bucketIndices[symbol].first - bucketsOffsetS[symbol] + 1;
 }

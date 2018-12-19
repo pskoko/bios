@@ -32,13 +32,13 @@ protected:
 
     bool isSet(unsigned long index);
 
-    void addToLBucket(unsigned long suffix);
-    void addToSBucket(unsigned long suffix);
+    unsigned long addToLBucket(unsigned long suffix);
+    unsigned long addToSBucket(unsigned long suffix);
 
-    bool isFirstInLBucket(unsigned long suffix);
-    bool isLastInLBucket(unsigned long suffix);
-    bool isFirstInSBucket(unsigned long suffix);
-    bool isLastInSBucket(unsigned long suffix);
+    bool isFirstInLBucket(unsigned long index);
+    bool isLastInLBucket(unsigned long index);
+    bool isFirstInSBucket(unsigned long index);
+    bool isLastInSBucket(unsigned long index);
 
 
 public:
