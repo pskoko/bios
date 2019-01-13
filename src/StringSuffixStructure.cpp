@@ -4,6 +4,7 @@
 
 #include "StringSuffixStructure.hpp"
 
+StringSuffixStructure::StringSuffixStructure(const std::string &text_) : text{text_} {}
 const char& StringSuffixStructure::operator[](const unsigned long index) const {
     return text[index];
 }

@@ -13,7 +13,7 @@ private:
     const std::string& text;
 
 public:
-    StringSuffixStructure(std::string& text);
+    StringSuffixStructure(const std::string& text);
     const char& operator[](const unsigned long index) const;
     unsigned long getSize() const;
 };

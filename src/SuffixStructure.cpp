@@ -5,6 +5,49 @@
 #include "SuffixStructure.hpp"
 
 template <typename T>
+void SuffixStructure<T>::generateStructures() {
+    std::map<T, unsigned int> counts;
+    for(unsigned int i = 0; i < getSize(); i++){
+        T symbol = (*this)[i];
+        counts[symbol]++;
+        alphabet.insert(symbol);
+    }
+
+    unsigned int position = 0;
+    for(T symbol: alphabet){
+        bucketIndices[symbol] = std::make_pair(position, position + counts[symbol]);
+        position += counts[symbol];
+    }
+
+    SA_data = std::vector<unsigned long>(getSize());
+    LCP_data = std::vector<unsigned long>(getSize());
+    accessed = std::vector<bool>(getSize(), false);
+}
+
+template <typename T>
+unsigned long& SuffixStructure<T>::SA(const unsigned long index) {
+    accessed[index] = true;
+    return SA_data[index];
+}
+
+template <typename T>
+unsigned long& SuffixStructure<T>::LCP(const unsigned long index) {
+    accessed[index] = true;
+    return LCP_data[index];
+}
+
+template <typename T>
+void SuffixStructure<T>::cleraAll() {
+    std::vector<unsigned long>().swap(SA_data);
+    std::vector<unsigned long>().swap(LCP_data);
+    std::vector<bool>().swap(accessed);
+}
+
+template <typename T>
+void SuffixStructure<T>::clearAdditionalStructure() {
+
+}
+template <typename T>
 bool SuffixStructure<T>::isL(const unsigned long index) const {
     return !sType.at(index);
 }

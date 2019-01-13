@@ -5,22 +5,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
 project(LCP-inducing)
 
-option(BUILD_UNIT_TESTS "Build unit tests" OFF)
-#if (BUILD_UNIT_TESTS)
-#    enable_testing()
-#
-#    add_library(Catch INTERFACE src/StarSuffixStructure.cpp src/StarSuffixStructure.hpp)
-#    target_include_directories(Catch INTERFACE tests/unit/include)
-#
-#endif()
 
 set(SOURCES_LIST
         "src/StarSuffixStructure.cpp"
         "src/StringSuffixStructure.cpp"
         "src/SuffixStructure.cpp"
-        )
+        src/SAIS.cpp src/SAIS.hpp )
 
-option(BUILD_DOC "Build documentation" ON)
+option(BUILD_DOC "Build documentation" OFF)
 if (BUILD_DOC)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
@@ -39,4 +31,24 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-add_executable(LCP ${SOURCES_LIST})
+add_library(LCP_base ${SOURCES_LIST})
+
+add_executable(LCP src/main.cpp)
+target_link_libraries(LCP PUBLIC LCP_base)
+
+
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+if (BUILD_UNIT_TESTS)
+    set(TEST_SOURCES
+            tests/catch.cpp tests/SuffixStructureTest.cpp)
+    enable_testing()
+
+    add_library(Catch INTERFACE)
+    target_include_directories(Catch INTERFACE tests/include)
+
+    add_executable(LCP_test ${TEST_SOURCES})
+    target_link_libraries(LCP_test PUBLIC LCP_base Catch)
+
+    add_test(NAME UnitTest COMMAND LCP_test)
+
+endif()

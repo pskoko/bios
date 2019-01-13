@@ -17,14 +17,14 @@ private:
     std::set<T> alphabet;
 
     std::vector<bool> sType;
-    std::vector<bool> sStarType;
-    std::vector<unsigned long> SA;
-    std::vector<unsigned long> LCP;
+    std::vector<unsigned long> SA_data;
+    std::vector<unsigned long> LCP_data;
     std::map<T, unsigned long> bucketsOffsetL;
     std::map<T, unsigned long> bucketsOffsetS;
+    std::vector<bool> accessed;
 
 
-protected:
+public:
 
     void generateStructures();
     void clearAdditionalStructure();
@@ -41,11 +41,8 @@ protected:
     bool isLastInSBucket(unsigned long index);
 
 
-public:
-    virtual const unsigned long& SA(const unsigned long index) const;
     virtual unsigned long& SA(const unsigned long index);
 
-    virtual const unsigned long& LCP(const unsigned long index) const;
     virtual unsigned long& LCP(const unsigned long index);
 
     bool isL(const unsigned long index) const;

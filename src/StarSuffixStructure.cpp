@@ -27,4 +27,5 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
     }
 
     text.push_back(0);
+
 }
