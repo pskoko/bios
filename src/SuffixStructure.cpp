@@ -108,6 +108,7 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
         M[symbol] = std::numeric_limits<unsigned long>::max();
     }
 
+    std::map<unsigned long, unsigned long> original;
     for( long i = 0; i <= getSize(); i++) {
 
         if(!isSet(i)) continue;
@@ -118,30 +119,41 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
 
         // position of the induced suffix in SA/LCP
         unsigned long k = addToLBucket(SA(i) - 1);
+        original[k] = i;
 
         if(induceLCP) {
 
+
+            if (isFirstInLBucket(k, (*this)[SA(i) - 1])) {
+                LCP(k) = 0;
+            } else{
+                if (isLastInLBucket(k, (*this)[SA(i) - 1])) {
+                    unsigned long lcp = 0;
+                    if (k < getSize() && isSet(k+1)) {
+                        while (((SA(k + 1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) &&
+                        (*this)[SA(k) + lcp] == (*this)[SA(k + 1) + lcp]) {
+                            lcp++;
+                        }
+                    }
+                    if(isSet(k+1)) {
+                        LCP(k + 1) = lcp;
+                    }
+
+                }
+                unsigned long ip = original[k - 1];
+
+                if ((SA(i) == getSize()) || (SA(ip) == getSize()) || (*this)[SA(i)] != (*this)[SA(ip)]) {
+                    LCP(k) = 1;
+                } else {
+                    LCP(k) = M[(*this)[SA(i)]] + 1;
+                }
+            }
+
+            if(SA(i) == getSize()) continue;
+
+            M[(*this)[SA(i)]] = LCP(i);
             for (T symbol : alphabet) {
                 M[symbol] = std::min(M[symbol], LCP(i));
-            }
-
-            if(isFirstInLBucket(k, (*this)[SA(i) - 1])) {
-                LCP(k) = 0;
-            } else {
-                LCP(k) = M[(*this)[SA(i)-1]] + 1;
-            }
-
-            M[(*this)[SA(i)-1]] = std::numeric_limits<unsigned long>::max();
-
-            // last symbol in alphabet (lexicographic greatest symbol) has no S-type suffixes
-            // so that's why we need to check if k is the last index
-            if((k < (getSize()-1)) && isLastInLBucket(k, (*this)[SA(i) - 1])) {
-                unsigned long lcp = 0;
-                while(((SA(k+1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) && (*this)[SA(k)+lcp] == (*this)[SA(k+1)+lcp]) {
-                    lcp++;
-                }
-
-                LCP(k+1) = lcp;
             }
 
         }
@@ -156,6 +168,7 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
         M[symbol] = std::numeric_limits<unsigned long>::max();
     }
 
+    std::map<unsigned long, unsigned long> original;
     for(long i = getSize(); i >= 0; i--) {
 
         if(!isSet(i)) continue;
@@ -168,29 +181,39 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
         // position of the induced suffix in SA/LCP
         unsigned long k = addToSBucket(SA(i) - 1);
 
+        original[k] = i;
         if(induceLCP) {
+
+
+            if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
+
+            } else {
+                if (isFirstInSBucket(k, (*this)[SA(i) - 1])) {
+                    unsigned long lcp = 0;
+                    if (k > 0 && isSet(k - 1)) {
+                        while (((SA(k - 1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) &&
+                               (*this)[SA(k - 1) + lcp] == (*this)[SA(k) + lcp]) {
+                            lcp++;
+                        }
+                    }
+
+                    LCP(k) = lcp;
+
+                }
+
+                unsigned long ip = original[k + 1];
+                if ((SA(i) == getSize()) || (SA(ip) == getSize()) || (*this)[SA(i)] != (*this)[SA(ip)]) {
+                    LCP(k + 1) = 1;
+                } else {
+                    LCP(k + 1) = M[(*this)[SA(i)]] + 1;
+                }
+            }
+
+            if(SA(i) == getSize())  continue;
+            M[(*this)[SA(i)]] = LCP(i);
 
             for (T symbol : alphabet) {
                 M[symbol] = std::min(M[symbol], LCP(i));
-            }
-
-            if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
-                // pass
-            } else {
-                LCP(k+1) = M[(*this)[SA(i)-1]] + 1;
-            }
-
-            M[(*this)[SA(i)-1]] = std::numeric_limits<unsigned long>::max();
-
-            // there is no L-type suffix that starts with the smallest symbol in alphabet, e.g. '$'
-            // so that's why we need to check if k > 0
-            if(k > 0 && isFirstInSBucket(k, (*this)[SA(i) - 1])) {
-                unsigned long lcp = 0;
-                while( ((SA(k-1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) && (*this)[SA(k-1)+lcp] == (*this)[SA(k)+lcp]) {
-                    lcp++;
-                }
-
-                LCP(k) = lcp;
             }
 
         }
@@ -248,7 +271,7 @@ void SuffixStructure<T>::induceArrays(bool induceLCp) {
 //    std::cerr << std::endl;
     starSuffixStructure.fillSuffixStructure();
 
-    clearAdditionalStructure();
+   clearAdditionalStructure();
     induceL(induceLCp);
     induceS(induceLCp);
 

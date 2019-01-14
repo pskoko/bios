@@ -150,14 +150,16 @@ TEST_CASE("Inducing the suffix array"){
 
     SECTION("Basic inducing 4"){
         StringSuffixStructure sa("abaac");
-        sa.induceArrays(false);
+        sa.induceArrays(true);
         REQUIRE(compareSA({5, 2, 0, 3, 1, 4}, sa) == true);
+        REQUIRE(compareLCP({0, 0, 1, 1, 0, 0}, sa) == true);
     }
 
     SECTION("Basic inducing 5"){
         StringSuffixStructure sa("mississippi");
-        sa.induceArrays(false);
+        sa.induceArrays(true);
         REQUIRE(compareSA({11, 10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2}, sa) == true);
+        REQUIRE(compareLCP({0, 0, 1, 1, 4, 0, 0, 1, 0, 2, 1, 3}, sa) == true);
     }
 
     SECTION("Basic inducing 6"){

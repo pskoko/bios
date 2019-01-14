@@ -87,7 +87,7 @@ void StarSuffixStructure<T>::fillSuffixStructure() {
             if(SA(i)+j == getSize()){
                 temp += 1;
             } else {
-                temp += sortedStarSubstrings[SA(i) + j + 1] - sortedStarSubstrings[SA(i) + j];
+                temp += sortedStarSubstrings[SA(i) + j + 1] - sortedStarSubstrings[SA(i) + j] + 1;
             }
             mins[j+1] = temp;
         }
