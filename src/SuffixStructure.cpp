@@ -179,23 +179,20 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
         original[k] = i;
         if(induceLCP) {
 
-
-            if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
-
-            } else {
-                if (isFirstInSBucket(k, (*this)[SA(i) - 1])) {
-                    unsigned long lcp = 0;
-                    if (k > 0 && isSet(k - 1)) {
-                        while (((SA(k - 1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) &&
-                               (*this)[SA(k - 1) + lcp] == (*this)[SA(k) + lcp]) {
-                            lcp++;
-                        }
-                    }
-
-                    LCP(k) = lcp;
-
+            if (isFirstInSBucket(k, (*this)[SA(i) - 1]) && k > 0) {
+                unsigned long lcp = 0;
+                while (((SA(k - 1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) &&
+                       (*this)[SA(k - 1) + lcp] == (*this)[SA(k) + lcp]) {
+                    lcp++;
                 }
 
+                LCP(k) = lcp;
+            }
+
+
+            if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
+                // don't do anything
+            } else {
                 unsigned long ip = original[k + 1];
                 if ((SA(i) == getSize()) || (SA(ip) == getSize()) || (*this)[SA(i)] != (*this)[SA(ip)]) {
                     LCP(k + 1) = 1;
@@ -205,8 +202,8 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
             }
 
             if(SA(i) == getSize())  continue;
-            M[(*this)[SA(i)]] = LCP(i);
 
+            M[(*this)[SA(i)]] = LCP(i);
             for (T symbol : alphabet) {
                 M[symbol] = std::min(M[symbol], LCP(i));
             }
