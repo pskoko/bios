@@ -15,17 +15,25 @@ for i in range(65, 91):
 for i in range(97, 122):
     all_letters.append(chr(i))
 
-string_length = int(sys.argv[1])
+def generate(string_length):
+	s = []
 
-s = []
+	for i in range(string_length):
+	    idx = random.randint(0, len(all_letters)-1)
+	    s.append(all_letters[idx])
 
-for i in range(string_length):
-    idx = random.randint(0, len(all_letters)-1)
-    s.append(all_letters[idx])
+	return ''.join(s)
 
-o_file = open(sys.argv[2], 'w')
+ns = [64, 128, 256, 512, 1024, 2048, 16384, 262144, 524288, 1048576]
 
-o_file.write(''.join(s))
+for n in ns:
+	for i in range(1, 11):
 
-o_file.flush()
-o_file.close()
+		f_name = 'syn_{}_{}.txt'.format(n, i)
+		print(f_name)
+		o_file = open(f_name, 'w')
+
+		o_file.write(generate(n))
+
+		o_file.flush()
+		o_file.close()
