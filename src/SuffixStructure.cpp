@@ -123,23 +123,18 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
 
         if(induceLCP) {
 
+            if (isLastInLBucket(k, (*this)[SA(i) - 1]) && k < getSize() && isSet(k+1)) {
+                unsigned long lcp = 0;
+                while (((SA(k + 1) + lcp) < getSize()) && ((SA(k) + lcp) < getSize()) &&
+                       (*this)[SA(k) + lcp] == (*this)[SA(k + 1) + lcp]) {
+                    lcp++;
+                }
+                LCP(k + 1) = lcp;
+            }
 
             if (isFirstInLBucket(k, (*this)[SA(i) - 1])) {
                 LCP(k) = 0;
-            } else{
-                if (isLastInLBucket(k, (*this)[SA(i) - 1])) {
-                    unsigned long lcp = 0;
-                    if (k < getSize() && isSet(k+1)) {
-                        while (((SA(k + 1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) &&
-                        (*this)[SA(k) + lcp] == (*this)[SA(k + 1) + lcp]) {
-                            lcp++;
-                        }
-                    }
-                    if(isSet(k+1)) {
-                        LCP(k + 1) = lcp;
-                    }
-
-                }
+            } else {
                 unsigned long ip = original[k - 1];
 
                 if ((SA(i) == getSize()) || (SA(ip) == getSize()) || (*this)[SA(i)] != (*this)[SA(ip)]) {
