@@ -12,7 +12,7 @@
 
 template <typename T>
 class SuffixStructure {
-private:
+public:
     std::map<T, std::pair<unsigned long, unsigned long>> bucketIndices;
     std::set<T> alphabet;
 
@@ -22,6 +22,8 @@ private:
     std::map<T, unsigned long> bucketsOffsetL;
     std::map<T, unsigned long> bucketsOffsetS;
     std::vector<bool> accessed;
+    std::map<T, unsigned long> bucketsSizesL;
+    std::map<T, unsigned long> bucketsSizesS;
 
 
 public:
@@ -34,12 +36,12 @@ public:
 
     unsigned long addToLBucket(unsigned long suffix);
     unsigned long addToSBucket(unsigned long suffix);
+    unsigned long addToSBucketReversed(unsigned long suffix);
 
-    bool isFirstInLBucket(unsigned long index);
-    bool isLastInLBucket(unsigned long index);
-    bool isFirstInSBucket(unsigned long index);
-    bool isLastInSBucket(unsigned long index);
-
+    bool isFirstInLBucket(unsigned long index, const T &t);
+    bool isLastInSBucket(unsigned long index, const T &t);
+    bool isLastInLBucket(unsigned long index, const T &t);
+    bool isFirstInSBucket(unsigned long index, const T &t);
 
     virtual unsigned long& SA(const unsigned long index);
 

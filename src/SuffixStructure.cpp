@@ -4,7 +4,6 @@
 
 #include <limits>
 #include <algorithm>
-#include <iostream>
 #include "SuffixStructure.hpp"
 #include "StarSuffixStructure.hpp"
 
@@ -15,6 +14,7 @@ void SuffixStructure<T>::generateStructures() {
         T symbol = (*this)[i];
         counts[symbol]++;
         alphabet.insert(symbol);
+
     }
 
     unsigned int position = 1;
@@ -31,7 +31,12 @@ void SuffixStructure<T>::generateStructures() {
     sType[getSize()] = true;
     for(int i = getSize()-2; i >= 0; i--){
         if((*this)[i] < (*this)[i+1]) sType[i] = true;
-        else if((*this)[i] == (*this)[i+1] && sType[i+1]) sType[i] = true;
+        else if(((*this)[i] == (*this)[i+1]) && sType[i+1] == true) sType[i] = true;
+    }
+
+    for(int i = 0; i < getSize(); i++){
+        if(isS(i)) bucketsSizesS[(*this)[i]]++;
+        else bucketsSizesL[(*this)[i]]++;
     }
 }
 
@@ -42,23 +47,13 @@ bool SuffixStructure<T>::isSet(unsigned long index) const{
 }
 
 template<typename T>
-bool SuffixStructure<T>::isFirstInLBucket(unsigned long index) {
-    return false;
+bool SuffixStructure<T>::isLastInLBucket(unsigned long index, const T &t) {
+    return (bucketIndices[t].first + bucketsSizesL[t]-1) == index;
 }
 
 template<typename T>
-bool SuffixStructure<T>::isLastInLBucket(unsigned long index) {
-    return false;
-}
-
-template<typename T>
-bool SuffixStructure<T>::isFirstInSBucket(unsigned long index) {
-    return false;
-}
-
-template<typename T>
-bool SuffixStructure<T>::isLastInSBucket(unsigned long index) {
-    return false;
+bool SuffixStructure<T>::isFirstInSBucket(unsigned long index, const T &t) {
+    return bucketIndices[t].second - bucketsSizesS[t] +1 == index;
 }
 
 template <typename T>
@@ -78,6 +73,9 @@ void SuffixStructure<T>::cleraAll() {
     std::vector<unsigned long>().swap(SA_data);
     std::vector<unsigned long>().swap(LCP_data);
     std::vector<bool>().swap(accessed);
+    bucketsSizesL.clear();
+    bucketsSizesS.clear();
+
     clearAdditionalStructure();
 }
 
@@ -127,7 +125,7 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
                 M[symbol] = std::min(M[symbol], LCP(i));
             }
 
-            if(isFirstInLBucket(k)) {
+            if(isFirstInLBucket(k, (*this)[SA(i) - 1])) {
                 LCP(k) = 0;
             } else {
                 LCP(k) = M[(*this)[SA(i)-1]] + 1;
@@ -137,9 +135,9 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
 
             // last symbol in alphabet (lexicographic greatest symbol) has no S-type suffixes
             // so that's why we need to check if k is the last index
-            if((k < (getSize()-1)) && isLastInLBucket(k)) {
+            if((k < (getSize()-1)) && isLastInLBucket(k, (*this)[SA(i) - 1])) {
                 unsigned long lcp = 0;
-                while((*this)[SA(k)+lcp] == (*this)[SA(k+1)+lcp]) {
+                while(((SA(k+1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) && (*this)[SA(k)+lcp] == (*this)[SA(k+1)+lcp]) {
                     lcp++;
                 }
 
@@ -176,7 +174,7 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
                 M[symbol] = std::min(M[symbol], LCP(i));
             }
 
-            if(isLastInSBucket(k)) {
+            if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
                 // pass
             } else {
                 LCP(k+1) = M[(*this)[SA(i)-1]] + 1;
@@ -186,9 +184,9 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
 
             // there is no L-type suffix that starts with the smallest symbol in alphabet, e.g. '$'
             // so that's why we need to check if k > 0
-            if(k > 0 && isFirstInSBucket(k)) {
+            if(k > 0 && isFirstInSBucket(k, (*this)[SA(i) - 1])) {
                 unsigned long lcp = 0;
-                while((*this)[SA(k-1)+lcp] == (*this)[SA(k)+lcp]) {
+                while( ((SA(k-1) + lcp) != getSize()) && ((SA(k) + lcp) != getSize()) && (*this)[SA(k-1)+lcp] == (*this)[SA(k)+lcp]) {
                     lcp++;
                 }
 
@@ -239,9 +237,13 @@ void SuffixStructure<T>::induceArrays(bool induceLCp) {
     StarSuffixStructure starSuffixStructure(*this);
     starSuffixStructure.induceArrays(induceLCp);
 
-    std::cerr << "in" << std::endl;
 //    for(unsigned long t: starSuffixStructure.getText()){
 //        std::cerr << t << " ";
+//    }
+//    std::cerr << std::endl;
+//
+//    for(int i = 0; i <= starSuffixStructure.getSize(); i++){
+//        std::cerr << starSuffixStructure.SA(i) << " ";
 //    }
 //    std::cerr << std::endl;
     starSuffixStructure.fillSuffixStructure();
@@ -250,4 +252,27 @@ void SuffixStructure<T>::induceArrays(bool induceLCp) {
     induceL(induceLCp);
     induceS(induceLCp);
 
+}
+
+template<typename T>
+bool SuffixStructure<T>::isFirstInLBucket(unsigned long index, const T &t) {
+    return index == bucketIndices[t].first;
+}
+
+template<typename T>
+bool SuffixStructure<T>::isLastInSBucket(unsigned long index, const T &t) {
+    return index == bucketIndices[t].second;
+}
+
+template<typename T>
+unsigned long SuffixStructure<T>::addToSBucketReversed(unsigned long suffix) {
+    if(suffix == getSize()) {
+        SA(0) = suffix;
+        return 0;
+    }
+    T symbol = (*this)[suffix];
+    long where = bucketIndices[symbol].second - bucketsSizesS[symbol] +1 + bucketsOffsetS[symbol];
+    SA(where) = suffix;
+    bucketsOffsetS[symbol]++;
+    return where;
 }

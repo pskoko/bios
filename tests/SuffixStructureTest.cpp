@@ -15,6 +15,15 @@ bool compareSA(const std::vector<long>& first, SuffixStructure<T>& sa){
     return true;
 }
 
+template <typename T>
+bool compareLCP(const std::vector<long>& first, SuffixStructure<T>& sa){
+    if(first.size() != sa.getSize()+1) return false;
+    for(int i = 1; i < first.size(); i++)
+        if(!sa.isSet(i) && first[i] != -1) return false;
+        else if(sa.isSet(i) && first[i] != sa.LCP(i)) return false;
+    return true;
+}
+
 TEST_CASE("Structures managment of SuffixStructure") {
 
 
@@ -113,8 +122,10 @@ TEST_CASE("Inducing test"){
 TEST_CASE("Inducing the suffix array"){
     SECTION("Basic inducing 1"){
         StringSuffixStructure sa("cba");
-        sa.induceArrays(false);
+        sa.induceArrays(true);
         REQUIRE(compareSA({3,2,1,0}, sa) == true);
+        REQUIRE(compareLCP({0, 0, 0, 0}, sa) == true);
+
     }
 
     SECTION("Basic inducing 2"){
@@ -125,14 +136,16 @@ TEST_CASE("Inducing the suffix array"){
 
     SECTION("Basic inducing 3"){
         StringSuffixStructure sa("aac");
-        sa.induceArrays(false);
+        sa.induceArrays(true);
         REQUIRE(compareSA({3,0,1,2}, sa) == true);
+        REQUIRE(compareLCP({0,0,1,0}, sa) == true);
     }
 
     SECTION("Basic inducing 3"){
         StringSuffixStructure sa("baac");
-        sa.induceArrays(false);
+        sa.induceArrays(true);
         REQUIRE(compareSA({4,1,2,0,3}, sa) == true);
+        REQUIRE(compareLCP({0,0,1,0,0}, sa) == true);
     }
 
     SECTION("Basic inducing 4"){

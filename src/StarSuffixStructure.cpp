@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <limits>
 
 template <typename T>
 StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure) : suffixStructure(_suffixStructure) {
@@ -27,11 +28,13 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
         }
     }
 
+    std::cerr << "sorted " << sortedStarSubstrings.size() << std::endl;
     unsigned long currentStarSuffix = sortedStarSubstrings.at(0);
     unsigned long currentSymbol = 0;
 
     unsigned long numSymbols = 1;
-    text.push_back(currentSymbol);
+    std::map<unsigned long, unsigned long> symbolMap;
+    symbolMap[currentStarSuffix] = currentSymbol;
     for(unsigned long starSuffix: sortedStarSubstrings) {
         if(currentStarSuffix == starSuffix) continue;
         if(compareStarSuffixes(currentStarSuffix, starSuffix) == false){
@@ -39,9 +42,15 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
             currentSymbol++;
             numSymbols++;
         }
-        text.push_back(currentSymbol);
+        symbolMap[starSuffix] = currentSymbol;
     }
 
+    sortedStarSubstrings.clear();
+    for(long i = 0; i <= suffixStructure.getSize(); i++){
+        if(!suffixStructure.isSstar(i)) continue;
+        text.push_back(symbolMap[i]);
+        sortedStarSubstrings.push_back(i);
+    }
     if(numSymbols == text.size()){
         completed = true;
     }
@@ -51,7 +60,7 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
 
 template<typename T>
 bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned long second) {
-    if(first == getSize() || second == getSize()) return false;
+    if(first == suffixStructure.getSize() || second == suffixStructure.getSize()) return false;
 
     bool start = true;
     while(true){
@@ -66,16 +75,36 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 
 template<typename T>
 void StarSuffixStructure<T>::fillSuffixStructure() {
+
+    std::map<unsigned long, unsigned long> mins;
+    std::vector<unsigned long> scaledLcp;
+    scaledLcp.push_back(0);
+    for(long i = 1; i <= getSize(); i++){
+        long m = std::min(LCP(i), LCP(i-1));
+
+        long temp = mins[m];
+        for(long j = m; j < LCP(i); j++){
+            if(SA(i)+j == getSize()){
+                temp += 1;
+            } else {
+                temp += sortedStarSubstrings[SA(i) + j + 1] - sortedStarSubstrings[SA(i) + j];
+            }
+            mins[j+1] = temp;
+        }
+        scaledLcp.push_back(temp);
+    }
+
     suffixStructure.generateStructures();
-    for(long i = getSize(); i > 0; i--){
-        suffixStructure.addToSBucket(sortedStarSubstrings[SA(i)]);
+    for(long i = 1; i <= getSize(); i++){
+        unsigned long k = suffixStructure.addToSBucketReversed(sortedStarSubstrings[SA(i)]);
+        suffixStructure.LCP(k) = scaledLcp[i];
     }
 
 }
 
 template<typename T>
 const unsigned long& StarSuffixStructure<T>::operator[](const unsigned long index) const{
-    return text[index];
+    return text.at(index);
 }
 
 template<typename E>
@@ -92,11 +121,12 @@ template<typename E>
 void StarSuffixStructure<E>::induceArrays(bool induceLCp) {
     if(completed){
         generateStructures();
-        for(long i = 1; i <= getSize(); i++){
-            SA(i) = i-1;
+        for(long i = 0; i <= getSize(); i++){
+            insertSuffix(i);
             LCP(i) = 0;
         }
-        SA(0) = getSize();
+        //SA(0) = getSize();
+        LCP(0) = std::numeric_limits<unsigned long>::max()/2;
         return;
     }
     SuffixStructure::induceArrays(induceLCp);

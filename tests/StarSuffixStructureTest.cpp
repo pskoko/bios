@@ -13,7 +13,7 @@ TEST_CASE("Test generating string"){
         StarSuffixStructure ssa(sa);
 
         const std::vector<unsigned long> &generatedText = ssa.getText();
-        const std::vector<unsigned long> expectedText{0, 1, 2};
+        const std::vector<unsigned long> expectedText{1, 2, 0};
         REQUIRE(std::equal(generatedText.begin(), generatedText.end(), expectedText.begin(), expectedText.end()) ==
                 true);
     }
@@ -24,7 +24,7 @@ TEST_CASE("Test generating string"){
         StarSuffixStructure ssa(sa);
 
         const std::vector<unsigned long> &generatedText = ssa.getText();
-        const std::vector<unsigned long> expectedText{0, 1, 1, 2};
+        const std::vector<unsigned long> expectedText{1, 1, 2, 0};
         REQUIRE(std::equal(generatedText.begin(), generatedText.end(), expectedText.begin(), expectedText.end()) ==
                 true);
     }

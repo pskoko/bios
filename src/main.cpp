@@ -17,10 +17,11 @@ int main(int argc, const char* argv[]){
     std::string text{buffer.str()};
 
     StringSuffixStructure suffixStructure(text);
-    suffixStructure.induceArrays(false);
-    for(int i = 0; i <= suffixStructure.getSize(); i++){
-        std::cout << suffixStructure.SA(i);
-        if(i != suffixStructure.getSize()) std::cout << " ";
+    suffixStructure.induceArrays(true);
+    std::cout << -1 << " ";
+    for(int i = 1; i <= suffixStructure.getSize(); i++){
+        std::cout << suffixStructure.LCP(i) << " ";
+//        if(i != suffixStructure.getSize()) std::cout << " ";
 
     }
 
