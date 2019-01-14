@@ -7,9 +7,9 @@ project(LCP-inducing)
 
 
 set(SOURCES_LIST
-        "src/StarSuffixStructure.cpp"
         "src/StringSuffixStructure.cpp"
         "src/SuffixStructure.cpp"
+        "src/StarSuffixStructure.cpp"
         src/SAIS.cpp src/SAIS.hpp )
 
 option(BUILD_DOC "Build documentation" OFF)
@@ -37,10 +37,10 @@ add_executable(LCP src/main.cpp)
 target_link_libraries(LCP PUBLIC LCP_base)
 
 
-option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+option(BUILD_UNIT_TESTS "Build unit tests" ON)
 if (BUILD_UNIT_TESTS)
     set(TEST_SOURCES
-            tests/catch.cpp tests/SuffixStructureTest.cpp)
+            tests/catch.cpp tests/SuffixStructureTest.cpp tests/StarSuffixStructureTest.cpp)
     enable_testing()
 
     add_library(Catch INTERFACE)

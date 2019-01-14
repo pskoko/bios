@@ -8,6 +8,4 @@
 
 std::pair<std::vector<unsigned long>, std::vector<unsigned long>> sais(const std::string& text){
     StringSuffixStructure suffixStructure(text);
-
-    suffixStructure.
 }

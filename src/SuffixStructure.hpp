@@ -30,7 +30,7 @@ public:
     void clearAdditionalStructure();
     void cleraAll();
 
-    bool isSet(unsigned long index);
+    bool isSet(unsigned long index) const;
 
     unsigned long addToLBucket(unsigned long suffix);
     unsigned long addToSBucket(unsigned long suffix);
@@ -50,16 +50,19 @@ public:
 
     bool isSstar(const unsigned long index) const;
 
-    virtual const T& operator[](const unsigned long index) const;
+    virtual const T& operator[](const unsigned long index) const = 0;
 
-    virtual unsigned long getSize() const;
+    virtual unsigned long getSize() const = 0;
     void induceL(bool induceLcp);
     void induceS(bool induceLcp);
+    void insertSuffix(unsigned long suffix);
+
+    virtual void induceArrays(bool induceLCp);
 
 };
 
 
-template class SuffixStructure<int>;
+template class SuffixStructure<unsigned long>;
 template class SuffixStructure<char>;
 
 #endif //LCP_INDUCING_SUFFIXSTRUCTURE_HPP

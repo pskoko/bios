@@ -6,17 +6,29 @@
 #define LCP_INDUCING_STARSUFFIXSTRUCTURE_HPP
 
 #include "SuffixStructure.hpp"
+#include <map>
 
-template <typename T>
+template <typename E>
 class StarSuffixStructure : public SuffixStructure<unsigned long>{
 private:
     std::vector<unsigned long> text;
-    SuffixStructure<T>& suffixStructure;
+    SuffixStructure<E>& suffixStructure;
+    std::vector<unsigned long> sortedStarSubstrings;
+    bool completed = false;
 
 public:
-    StarSuffixStructure(SuffixStructure<T>& suffixStructure);
+    StarSuffixStructure(SuffixStructure<E>& suffixStructure);
+    bool compareStarSuffixes(unsigned long first, unsigned long second);
+    void fillSuffixStructure();
+
+    const unsigned long& operator[](const unsigned long index) const;
+    unsigned long getSize() const;
+
+    const std::vector<unsigned long>& getText() const;
+    void induceArrays(bool induceLCp);
 
 };
 
-
+template class StarSuffixStructure<char>;
+template class StarSuffixStructure<unsigned long>;
 #endif //LCP_INDUCING_STARSUFFIXSTRUCTURE_HPP
