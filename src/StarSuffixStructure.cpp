@@ -76,18 +76,20 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 template<typename T>
 void StarSuffixStructure<T>::fillSuffixStructure() {
 
-    for(long k = 0; k <= getSize(); k++) {
+    for(long k = 1; k <= getSize(); k++) {
         unsigned long sum = 0;
 
         unsigned long first = -1;
         unsigned long second = -1;
-        for (long i = 0; i <= LCP(k); i++) {
-            first = sortedStarSubstrings[SA(k) + i];
-            second = sortedStarSubstrings[SA(k) + i + 1];
-            if(i != LCP(k)) {
-                sum += second - first;
-            }
-        }
+        first = sortedStarSubstrings[SA(k - 1)];
+        second = sortedStarSubstrings[SA(k)];
+        //for (long i = 0; i <= LCP(k); i++) {
+        //    first = sortedStarSubstrings[SA(k - 1) + i];
+        //    second = sortedStarSubstrings[SA(k) + i];
+        //    if(i != LCP(k)) {
+        //        sum += second - first;
+        //    }
+        //}
 
         long j = 0;
         while((first + j) < suffixStructure.getSize() && (second + j) < suffixStructure.getSize() && suffixStructure[first + j] == suffixStructure[second + j]) {
@@ -127,7 +129,8 @@ void StarSuffixStructure<E>::induceArrays(bool induceLCp) {
         generateStructures();
         for(long i = 0; i <= getSize(); i++){
             insertSuffix(i);
-            LCP(i) = 0;
+            //LCP(i) = std::numeric_limits<unsigned long>::max();
+            //LCP(i) = 0;
         }
         //SA(0) = getSize();
         //LCP(0) = std::numeric_limits<unsigned long>::max()/2;
