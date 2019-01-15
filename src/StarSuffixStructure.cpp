@@ -64,7 +64,7 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 
     bool start = true;
     while(true){
-        if(!start && suffixStructure.isSstar(first) && suffixStructure.isSstar(second)) return true;
+        if(!start && suffixStructure.isSstar(first) && suffixStructure.isSstar(second) && suffixStructure[first] == suffixStructure[second]) return true;
         if(suffixStructure.isSstar(first) != suffixStructure.isSstar(second)) return false;
         if(suffixStructure[first] != suffixStructure[second]) return false;
         first++;
@@ -76,28 +76,22 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 template<typename T>
 void StarSuffixStructure<T>::fillSuffixStructure() {
 
-    std::map<unsigned long, unsigned long> mins;
-    std::vector<unsigned long> scaledLcp;
-    scaledLcp.push_back(0);
-    for(long i = 1; i <= getSize(); i++){
-        long m = std::min(LCP(i), LCP(i-1));
-
-        long temp = mins[m];
-        for(long j = m; j < LCP(i); j++){
-            if(SA(i)+j == getSize()){
-                temp += 1;
+    for(long k = 1; k <= getSize(); k++) {
+        unsigned long sum = 0;
+        for (long i = 0; i < LCP(k); i++) {
+            if((SA(k)+i) == getSize()) {
+                sum += 1;
             } else {
-                temp += sortedStarSubstrings[SA(i) + j + 1] - sortedStarSubstrings[SA(i) + j] + 1;
+                sum += sortedStarSubstrings[SA(k) + i + 1] - sortedStarSubstrings[SA(k) + i] + 1;
             }
-            mins[j+1] = temp;
         }
-        scaledLcp.push_back(temp);
+        LCP(k) = sum;
     }
 
     suffixStructure.generateStructures();
     for(long i = 1; i <= getSize(); i++){
         unsigned long k = suffixStructure.addToSBucketReversed(sortedStarSubstrings[SA(i)]);
-        suffixStructure.LCP(k) = scaledLcp[i];
+        suffixStructure.LCP(k) = LCP(i);
     }
 
 }
@@ -126,7 +120,7 @@ void StarSuffixStructure<E>::induceArrays(bool induceLCp) {
             LCP(i) = 0;
         }
         //SA(0) = getSize();
-        LCP(0) = std::numeric_limits<unsigned long>::max()/2;
+        //LCP(0) = std::numeric_limits<unsigned long>::max()/2;
         return;
     }
     SuffixStructure::induceArrays(induceLCp);
