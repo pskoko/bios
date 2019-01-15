@@ -26,7 +26,6 @@ void SuffixStructure<T>::generateStructures() {
     SA_data = std::vector<unsigned long>(getSize()+1);
     LCP_data = std::vector<unsigned long>(getSize()+1);
     accessed = std::vector<bool>(getSize()+1, false);
-
     for(int i = 0; i < getSize(); i++) {
         LCP(i) = std::numeric_limits<unsigned long>::max();
     }
@@ -68,7 +67,6 @@ unsigned long& SuffixStructure<T>::SA(const unsigned long index) {
 
 template <typename T>
 unsigned long& SuffixStructure<T>::LCP(const unsigned long index) {
-    accessed[index] = true;
     return LCP_data[index];
 }
 
