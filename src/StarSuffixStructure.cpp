@@ -76,7 +76,7 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 template<typename T>
 void StarSuffixStructure<T>::fillSuffixStructure() {
 
-    for(long k = 1; k <= getSize(); k++) {
+    for(long k = 2; k <= getSize(); k++) {
         unsigned long sum = 0;
 
         unsigned long first = -1;
