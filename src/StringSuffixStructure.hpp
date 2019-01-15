@@ -1,6 +1,13 @@
-//
-// Created by pskoko on 12/15/18.
-//
+/**
+* @file StringSuffixStructure.h
+* @brief this header file contains all required
+* declarations for the StringSuffixStructure class implementing
+* SuffixStructure for char type.
+*
+* @author pskoko
+*
+* @date 12/15/2018
+*/
 
 #ifndef LCP_INDUCING_STRINGSUFFIXSTRUCTURE_HPP
 #define LCP_INDUCING_STRINGSUFFIXSTRUCTURE_HPP

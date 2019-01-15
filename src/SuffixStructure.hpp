@@ -1,6 +1,14 @@
-//
-// Created by pskoko on 12/15/18.
-//
+/**
+* @file SuffixStructure.h
+* @brief this header file contains all required
+* declarations for the base SuffixStructure class responsible for
+* storing the algorithm state and performing all state operations including
+* the induction algorithm itself for a given text
+*
+* @author pskoko
+*
+* @date 12/15/2018
+*/
 
 #ifndef LCP_INDUCING_SUFFIXSTRUCTURE_HPP
 #define LCP_INDUCING_SUFFIXSTRUCTURE_HPP

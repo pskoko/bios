@@ -1,6 +1,17 @@
-//
-// Created by pskoko on 12/15/18.
-//
+/**
+* @file StarSuffixStructure.h
+* @brief this header file contains all required
+* declarations for the StarSuffixStructure class implementing
+* SuffixStructure for unsigned long type.
+* This implementation specializes in storing S* suffixes for sorting and 
+* recursive inductions used in the LCP induction algorithm.
+*
+* This implementation is required by and used in the base SuffixStructure class
+*
+* @author pskoko
+*
+* @date 12/15/2018
+*/
 
 #ifndef LCP_INDUCING_STARSUFFIXSTRUCTURE_HPP
 #define LCP_INDUCING_STARSUFFIXSTRUCTURE_HPP
