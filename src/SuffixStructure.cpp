@@ -26,7 +26,7 @@ void SuffixStructure<T>::generateStructures() {
     SA_data = std::vector<unsigned long>(getSize()+1);
     LCP_data = std::vector<unsigned long>(getSize()+1);
     accessed = std::vector<bool>(getSize()+1, false);
-    for(int i = 0; i < getSize(); i++) {
+    for(int i = 0; i <= getSize(); i++) {
         LCP(i) = std::numeric_limits<unsigned long>::max();
     }
 
@@ -147,7 +147,7 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
                     LCP(k) = 1;
                 } else {
                     //LCP(k) = M[(*this)[SA(i)]] + 1; // wrong
-                    LCP(k) = M[(*this)[SA(i)-1]] + 1; // right
+                    //LCP(k) = M[(*this)[SA(i)-1]] + 1; // right
                     // if in doubt, use this down
                     unsigned long min = std::numeric_limits<unsigned long>::max();
                     for(int j = ip + 1; j <= i; j++) {
@@ -204,7 +204,6 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
                 LCP(k) = lcp;
             }
 
-
             if(isLastInSBucket(k, (*this)[SA(i) - 1])) {
                 // don't do anything
             } else {
@@ -213,7 +212,7 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
                     LCP(k + 1) = 1;
                 } else {
                     //LCP(k + 1) = M[(*this)[SA(i)]] + 1;
-                    LCP(k + 1) = M[(*this)[SA(i)-1]] + 1;
+                    //LCP(k + 1) = M[(*this)[SA(i)-1]] + 1;
                     unsigned long min = std::numeric_limits<unsigned long>::max();
                     for(int j = i + 1; j <= ip; j++) {
                         min = std::min(min, LCP(j));
