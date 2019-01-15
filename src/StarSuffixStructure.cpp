@@ -76,15 +76,25 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 template<typename T>
 void StarSuffixStructure<T>::fillSuffixStructure() {
 
-    for(long k = 1; k <= getSize(); k++) {
+    for(long k = 0; k <= getSize(); k++) {
         unsigned long sum = 0;
-        for (long i = 0; i < LCP(k); i++) {
-            if((SA(k)+i) == getSize()) {
-                sum += 1;
-            } else {
-                sum += sortedStarSubstrings[SA(k) + i + 1] - sortedStarSubstrings[SA(k) + i] + 1;
+
+        unsigned long first = -1;
+        unsigned long second = -1;
+        for (long i = 0; i <= LCP(k); i++) {
+            first = sortedStarSubstrings[SA(k) + i];
+            second = sortedStarSubstrings[SA(k) + i + 1];
+            if(i != LCP(k)) {
+                sum += second - first;
             }
         }
+
+        long j = 0;
+        while((first + j) < suffixStructure.getSize() && (second + j) < suffixStructure.getSize() && suffixStructure[first + j] == suffixStructure[second + j]) {
+            j++;
+            sum++;
+        }
+
         LCP(k) = sum;
     }
 
