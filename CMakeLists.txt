@@ -9,8 +9,7 @@ project(LCP-inducing)
 set(SOURCES_LIST
         "src/StringSuffixStructure.cpp"
         "src/SuffixStructure.cpp"
-        "src/StarSuffixStructure.cpp"
-        src/SAIS.cpp src/SAIS.hpp )
+        "src/StarSuffixStructure.cpp")
 
 option(BUILD_DOC "Build documentation" OFF)
 if (BUILD_DOC)
