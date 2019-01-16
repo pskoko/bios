@@ -18,9 +18,15 @@
 #include <set>
 
 
+/**
+ * Abstract class which represents suffix structure over some text.
+ * It encapsulates LCP i SA arrays, and other data structures and operations
+ * neccesary for implementing the modifyed SA-IS algorithm like bucket indices
+ * @tparam T type of characters in text
+ */
 template <typename T>
 class SuffixStructure {
-public:
+private:
     std::map<T, std::pair<unsigned long, unsigned long>> bucketIndices;
     std::set<T> alphabet;
 
