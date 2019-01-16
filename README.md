@@ -32,6 +32,6 @@ make
 
 Program is build under the name `LCP` and its run syntax is:
 ```
-LCP <path to input file> <path to output file>
+./LCP <path to input file> <path to output file>
 ```
 First argument is path to file with text to calculate lcp values, and second argument is path to file where lcp values will be written.
