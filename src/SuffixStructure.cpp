@@ -324,9 +324,9 @@ void SuffixStructure<T>::induceArrays(bool induceLCp) {
 //        std::cerr << starSuffixStructure.SA(i) << " ";
 //    }
 //    std::cerr << std::endl;
-    std::cerr << "in fill" << std::endl;
+//    std::cerr << "in fill" << std::endl;
     starSuffixStructure.fillSuffixStructure();
-    std::cerr << "out fill" << std::endl;
+//    std::cerr << "out fill" << std::endl;
 
    clearAdditionalStructure();
     induceL(induceLCp);

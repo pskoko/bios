@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 
 project(LCP-inducing)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
 
 set(SOURCES_LIST
         "src/StringSuffixStructure.cpp"
@@ -36,8 +41,8 @@ add_executable(LCP src/main.cpp)
 target_link_libraries(LCP PUBLIC LCP_base)
 
 
-option(BUILD_UNIT_TESTS "Build unit tests" ON)
-if (BUILD_UNIT_TESTS)
+option(BUILD_UNIT_TESTS "Build unit tests" OFF)
+if (BUILD_UNIT_TESTS OR CMAKE_BUILD_TYPE EQUAL "DEBUG")
     set(TEST_SOURCES
             tests/catch.cpp tests/SuffixStructureTest.cpp tests/StarSuffixStructureTest.cpp)
     enable_testing()

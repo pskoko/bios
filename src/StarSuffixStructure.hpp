@@ -19,6 +19,12 @@
 #include "SuffixStructure.hpp"
 #include <map>
 
+/**
+ * SuffixStructure class which creates text of S\* substrings of some
+ * other abstract structure. It supports creating such text and putting its SA values
+ * and scaled LCP values into original SuffixStructure
+ * @tparam E
+ */
 template <typename E>
 class StarSuffixStructure : public SuffixStructure<unsigned long>{
 private:
@@ -29,8 +35,24 @@ private:
     std::map<unsigned long, unsigned long> starSizes;
 
 public:
+    /**
+     * Constructor which creates text of S\* substrings of text of received
+     * Suffix Structure
+     * @param suffixStructure
+     */
     StarSuffixStructure(SuffixStructure<E>& suffixStructure);
+
+    /**
+     * Naively compares two star suffixes of original suffixStructure
+     * @param first
+     * @param second
+     * @return
+     */
     bool compareStarSuffixes(unsigned long first, unsigned long second);
+
+    /**
+     * Puts SA values and scaled LCP values into original SuffixStructure
+     */
     void fillSuffixStructure();
 
     const unsigned long& operator[](const unsigned long index) const;

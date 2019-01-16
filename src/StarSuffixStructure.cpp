@@ -37,7 +37,7 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
         }
     }
 
-    std::cerr << "sorted " << sortedStarSubstrings.size() << std::endl;
+//    std::cerr << "sorted " << sortedStarSubstrings.size() << std::endl;
     unsigned long currentStarSuffix = sortedStarSubstrings.at(0);
     unsigned long currentSymbol = 0;
 
@@ -73,8 +73,9 @@ bool StarSuffixStructure<T>::compareStarSuffixes(unsigned long first, unsigned l
 
     bool start = true;
     while(true){
-        if(!start && suffixStructure.isSstar(first) && suffixStructure.isSstar(second) && suffixStructure[first] == suffixStructure[second]) return true;
         if(suffixStructure.isSstar(first) != suffixStructure.isSstar(second)) return false;
+        if(suffixStructure.getSize() == first || suffixStructure.getSize() == second) return false;
+        if(!start && suffixStructure.isSstar(first) && suffixStructure.isSstar(second) && suffixStructure[first] == suffixStructure[second]) return true;
         if(suffixStructure[first] != suffixStructure[second]) return false;
         first++;
         second++;

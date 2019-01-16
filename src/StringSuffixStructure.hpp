@@ -15,6 +15,10 @@
 #include "SuffixStructure.hpp"
 #include <string>
 
+
+/**
+ * Class represents suffix structure of some string
+ */
 class StringSuffixStructure : public SuffixStructure<char> {
 private:
     const std::string& text;
