@@ -26,6 +26,7 @@ private:
     SuffixStructure<E>& suffixStructure;
     std::vector<unsigned long> sortedStarSubstrings;
     bool completed = false;
+    std::map<unsigned long, unsigned long> starSizes;
 
 public:
     StarSuffixStructure(SuffixStructure<E>& suffixStructure);
