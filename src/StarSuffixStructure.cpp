@@ -37,7 +37,7 @@ StarSuffixStructure<T>::StarSuffixStructure(SuffixStructure<T>& _suffixStructure
         }
     }
 
-    std::cerr << "sorted " << sortedStarSubstrings.size() << std::endl;
+//    std::cerr << "sorted " << sortedStarSubstrings.size() << std::endl;
     unsigned long currentStarSuffix = sortedStarSubstrings.at(0);
     unsigned long currentSymbol = 0;
 

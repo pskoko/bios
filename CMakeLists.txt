@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 project(LCP-inducing)
 
 
+set(CMAKE_CXX_FLAGS "-O3")
+
 set(SOURCES_LIST
         "src/StringSuffixStructure.cpp"
         "src/SuffixStructure.cpp"
