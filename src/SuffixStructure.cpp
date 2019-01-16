@@ -129,7 +129,7 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
                 M[symbol] = std::min(M[symbol], LCP(i));
             }
 
-            if (isLastInLBucket(k, (*this)[SA(i) - 1]) && k < getSize() /*&& isSet(SA(k+1))*/ && (*this)[SA(k)] == (*this)[SA(k+1)]) {
+            if (isLastInLBucket(k, (*this)[SA(i) - 1]) && k < getSize() && isSet(k+1) && (*this)[SA(k)] == (*this)[SA(k+1)]) {
                 unsigned long lcp = 1;
                 while (((SA(k + 1) + lcp) < getSize()) && ((SA(k) + lcp) < getSize()) &&
                        (*this)[SA(k) + lcp] == (*this)[SA(k + 1) + lcp]) {
