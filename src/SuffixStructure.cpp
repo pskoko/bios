@@ -4,6 +4,8 @@
 
 #include <limits>
 #include <algorithm>
+#include <iostream>
+#include <cmath>
 #include "SuffixStructure.hpp"
 #include "StarSuffixStructure.hpp"
 
@@ -113,7 +115,18 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
     std::map<unsigned long, unsigned long> original;
     for( long i = 0; i <= getSize(); i++) {
 
+        bool useSlow = false;
+        if(alphabet.size() > std::sqrt(getSize())) useSlow = true;
+
         if(!isSet(i)) continue;
+
+        if(induceLCP) {
+            if(!useSlow) {
+                for (T symbol : alphabet) {
+                    M[symbol] = std::min(M[symbol], LCP(i));
+                }
+            }
+        }
 
         if(((long)SA(i)-1) < 0 || !isL(SA(i)-1)) {
             continue;
@@ -125,9 +138,6 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
 
         if(induceLCP) {
 
-            for (T symbol : alphabet) {
-                M[symbol] = std::min(M[symbol], LCP(i));
-            }
 
             if (isLastInLBucket(k, (*this)[SA(i) - 1]) && k < getSize() && isSet(k+1) && (*this)[SA(k)] == (*this)[SA(k+1)]) {
                 unsigned long lcp = 1;
@@ -146,21 +156,30 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
                 if ((SA(i) == getSize()) || (SA(ip) == getSize()) || (*this)[SA(i)] != (*this)[SA(ip)]) {
                     LCP(k) = 1;
                 } else {
-                    //LCP(k) = M[(*this)[SA(i)]] + 1; // wrong
-                    //LCP(k) = M[(*this)[SA(i)-1]] + 1; // right
-                    // if in doubt, use this down
-                    unsigned long min = std::numeric_limits<unsigned long>::max();
-                    for(int j = ip + 1; j <= i; j++) {
-                        min = std::min(min, LCP(j));
+//                    LCP(k) = M[(*this)[SA(i)]] + 1; // wrong
+                    if(!useSlow) {
+                        LCP(k) = M[(*this)[SA(i) - 1]] + 1; // right
+                    } else {
+                        // if in doubt, use this down
+                        unsigned long min = std::numeric_limits<unsigned long>::max();
+                        for (int j = ip + 1; j <= i; j++) {
+                            min = std::min(min, LCP(j));
+                        }
+//                    if(LCP(k)-1 != min){
+//                        std::cerr << "min " << min << " LCP(k)" << LCP(k)-1 <<" i" << i << " ip" << ip << std::endl;
+//                        std::cerr << (*this)[SA(i) - 1] << " " << (*this)[SA(i)] << std::endl;
+//                    }
+                        LCP(k) = min + 1;
                     }
-                    LCP(k) = min + 1;
                 }
             }
 
             if(SA(i) == getSize()) continue;
 
             //M[(*this)[SA(i)]] = LCP(i);
-            M[(*this)[SA(i)-1]] = std::numeric_limits<unsigned long>::max();
+            if(!useSlow) {
+                M[(*this)[SA(i) - 1]] = std::numeric_limits<unsigned long>::max();
+            }
 
         }
     }
@@ -169,17 +188,32 @@ void SuffixStructure<T>::induceL(bool induceLCP) {
 template <typename T>
 void SuffixStructure<T>::induceS(bool induceLCP) {
 
+    bool useSlow = false;
+    if(alphabet.size() > std::sqrt(getSize())) useSlow = true;
     std::map<T, unsigned long> M;
-    for (T symbol : alphabet) {
-        M[symbol] = std::numeric_limits<unsigned long>::max();
+
+    if(!useSlow) {
+        for (T symbol : alphabet) {
+            M[symbol] = std::numeric_limits<unsigned long>::max();
+        }
     }
 
     std::map<unsigned long, unsigned long> original;
     for(long i = getSize(); i >= 0; i--) {
 
-        if(!isSet(i)) continue;
+        if (!isSet(i)) {
+            continue;
+        }
 
         if(((long)SA(i)-1) < 0 || !isS(SA(i)-1)) {
+
+            if((long)SA(i) - 1 >= 0 && induceLCP && !useSlow) {
+                M[(*this)[SA(i) - 1]] = LCP(i);
+                for (T symbol : alphabet) {
+                    M[symbol] = std::min(M[symbol], LCP(i));
+                }
+            }
+
             continue;
         }
 
@@ -190,9 +224,6 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
         original[k] = i;
         if(induceLCP) {
 
-            for (T symbol : alphabet) {
-                M[symbol] = std::min(M[symbol], LCP(i));
-            }
 
             if (isFirstInSBucket(k, (*this)[SA(i) - 1])) {
                 unsigned long lcp = 0;
@@ -212,19 +243,31 @@ void SuffixStructure<T>::induceS(bool induceLCP) {
                     LCP(k + 1) = 1;
                 } else {
                     //LCP(k + 1) = M[(*this)[SA(i)]] + 1;
-                    //LCP(k + 1) = M[(*this)[SA(i)-1]] + 1;
-                    unsigned long min = std::numeric_limits<unsigned long>::max();
-                    for(int j = i + 1; j <= ip; j++) {
-                        min = std::min(min, LCP(j));
+                    if(!useSlow) {
+                        LCP(k + 1) = M[(*this)[SA(i) - 1]] + 1;
+                    } else {
+                        unsigned long min = std::numeric_limits<unsigned long>::max();
+                        for (int j = i + 1; j <= ip; j++) {
+                            min = std::min(min, LCP(j));
+                        }
+//                    if(LCP(k+1)-1 != min){
+//                        std::cerr << "min " << min << " LCP(k+1)" << LCP(k+1)-1 <<" i" << i << " ip" << ip << std::endl;
+//                        std::cerr << (*this)[SA(i) - 1] << " " << (*this)[SA(i)] << std::endl;
+//                    }
+                        LCP(k + 1) = min + 1;
                     }
-                    LCP(k + 1) = min + 1;
                 }
             }
 
             if(SA(i) == getSize())  continue;
-
-            //M[(*this)[SA(i)]] = LCP(i);
-            M[(*this)[SA(i)-1]] = std::numeric_limits<unsigned long>::max();
+//
+            if(!useSlow) {
+                M[(*this)[SA(i) - 1]] = LCP(i);
+                for (T symbol : alphabet) {
+                    M[symbol] = std::min(M[symbol], LCP(i));
+                }
+            }
+//            M[(*this)[SA(i)-1]] = std::numeric_limits<unsigned long>::max();
 
         }
     }
@@ -267,19 +310,23 @@ void SuffixStructure<T>::insertSuffix(unsigned long suffix) {
 template<typename T>
 void SuffixStructure<T>::induceArrays(bool induceLCp) {
     generateStructures();
-    StarSuffixStructure starSuffixStructure(*this);
-    starSuffixStructure.induceArrays(induceLCp);
 
+    StarSuffixStructure starSuffixStructure(*this);
 //    for(unsigned long t: starSuffixStructure.getText()){
 //        std::cerr << t << " ";
 //    }
 //    std::cerr << std::endl;
+    starSuffixStructure.induceArrays(induceLCp);
+
+
 //
 //    for(int i = 0; i <= starSuffixStructure.getSize(); i++){
 //        std::cerr << starSuffixStructure.SA(i) << " ";
 //    }
 //    std::cerr << std::endl;
+    std::cerr << "in fill" << std::endl;
     starSuffixStructure.fillSuffixStructure();
+    std::cerr << "out fill" << std::endl;
 
    clearAdditionalStructure();
     induceL(induceLCp);
