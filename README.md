@@ -8,7 +8,7 @@ The implementation is done in C++ and licensed under the MIT license (see LICENS
 
 ## Instalation instructions
 
-Clone the git repository with
+Clone the git repository with:
 ```
 git clone https://github.com/pskoko/bios/
 ```
@@ -30,7 +30,7 @@ And build the program:
 make
 ```
 
-Program is build under the name `LCP` and its run syntax is:
+Program is built under the name `LCP` and its run syntax is:
 ```
 ./LCP <path to input file> <path to output file>
 ```
